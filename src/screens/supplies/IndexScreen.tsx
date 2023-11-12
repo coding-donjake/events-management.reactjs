@@ -79,8 +79,65 @@ const IndexScreen = () => {
     }
   };
 
+  const [supply, setSupply] = useState<any>([]);
+  const [loadedSupply, setLoadedSupply] = useState<boolean>(false);
+  const [searchSupplyData, setSearchSupplyData] = useState({
+    key: "",
+    filterKey: "",
+  });
+
+  const handleSearchSupplyKeyChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setSearchSupplyData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const getSupply = async () => {
+    setLoadedSupply(false);
+    try {
+      const response = await fetch("http://localhost:5000/supply/get", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          key: searchSupplyData.key,
+          status: searchSupplyData.filterKey,
+        }),
+      });
+      if (response.status === 500) {
+        setLoadedSupply(true);
+        toast.error("Internal server error!");
+        console.log("Failed to load supply.");
+        return;
+      }
+      if (response.ok) {
+        const res = await response.json();
+        console.log(res.data);
+        setSupply(res.data);
+        setLoadedSupply(true);
+        return;
+      }
+      setLoadedSupply(true);
+      toast.error("Unkown error occured!");
+      console.log(response);
+    } catch (error) {
+      setLoadedSupply(true);
+      toast.error("Client error!");
+      console.error("catch error:", error);
+    }
+  };
+
   useEffect(() => {
     getSupplier();
+    getSupply();
   }, []);
 
   return (
@@ -138,6 +195,65 @@ const IndexScreen = () => {
                   <InfoIconButton
                     icon={<FontAwesomeIcon icon={faEye} />}
                     onClick={() => navigate(`supplier/view/${supplier.id}`)}
+                  />
+                  <ErrorIconButton
+                    icon={<FontAwesomeIcon icon={faTrash} />}
+                    onClick={() => {}}
+                  />
+                </span>,
+              ])}
+            />
+          )}
+        </div>
+        <br />
+        <div className="p-6 bg-white rounded-xl shadow-xl">
+          <div className="flex gap-4 mb-2">
+            <h1 className="flex-1 font-bold text-xl">Supplies List</h1>
+            <div className="flex gap-2">
+              <Button
+                icon={<FontAwesomeIcon icon={faPlus} />}
+                content="Create Supply"
+                onClick={() => navigate("create")}
+              />
+              <Search
+                placeholder="Search..."
+                options={[
+                  { label: "No filter", value: "" },
+                  { label: "Active", value: "active" },
+                  { label: "Removed", value: "removed" },
+                ]}
+                onChange={handleSearchSupplyKeyChange}
+                onClick={getSupply}
+              />
+            </div>
+          </div>
+          {!loadedSupply ? (
+            <div className="py-10 text-center">
+              <span className="loading loading-dots loading-lg"></span>
+            </div>
+          ) : supply.length <= 0 ? (
+            <div className="py-10 text-gray-500 text-center">
+              <span className="text-6xl">
+                <FontAwesomeIcon icon={faFolderOpen} />
+              </span>
+              <p>No supply record found.</p>
+            </div>
+          ) : (
+            <RowTable
+              headers={["Name", "Brand", "Type", "Status", ""]}
+              rows={supply.map((supply: any) => [
+                supply.name,
+                supply.brand,
+                supply.type,
+                supply.status,
+                <span className="flex gap-2">
+                  <InfoIconButton
+                    icon={<FontAwesomeIcon icon={faPen} />}
+                    onClick={() => navigate(`update/${supply.id}`)}
+                  />
+                  <InfoIconButton
+                    icon={<FontAwesomeIcon icon={faEye} />}
+                    onClick={() => navigate(`view/${supply.id}`)}
                   />
                   <ErrorIconButton
                     icon={<FontAwesomeIcon icon={faTrash} />}

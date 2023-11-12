@@ -8,7 +8,7 @@ import { Input } from "../../components/inputs";
 import { toast } from "react-toastify";
 
 const CreateScreen = () => {
-  document.title = "Create Supplier";
+  document.title = "Create Supply";
 
   const navigate = useNavigate();
   const [createFormProcessing, setCreateFormProcessing] =
@@ -17,9 +17,8 @@ const CreateScreen = () => {
     [key: string]: string;
   }>({
     name: "",
-    address: "",
-    phone: "",
-    email: "",
+    brand: "",
+    type: "",
   });
 
   const handleInputChange = (
@@ -54,18 +53,17 @@ const CreateScreen = () => {
 
     try {
       setCreateFormProcessing(true);
-      const response = await fetch("http://localhost:5000/supplier/create", {
+      const response = await fetch("http://localhost:5000/supply/create", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          supplier: {
+          supply: {
             name: formData.name,
-            address: formData.address,
-            phone: formData.phone,
-            email: formData.email,
+            brand: formData.brand,
+            type: formData.type,
           },
           password: formData.password,
         }),
@@ -81,7 +79,7 @@ const CreateScreen = () => {
         return;
       }
       if (response.ok) {
-        toast.success("Create supplier success.");
+        toast.success("Create supply success.");
         navigate(-1);
         return;
       }
@@ -98,7 +96,7 @@ const CreateScreen = () => {
     <div className="flex h-screen">
       <AdminNavigation />
       <div className="flex-1 h-screen p-4 overflow-auto">
-        <h1 className="flex-1 font-bold text-3xl">Suppliers</h1>
+        <h1 className="flex-1 font-bold text-3xl">Supplies</h1>
         <hr />
         <br />
         <div className="p-6 bg-white rounded-xl shadow-xl">
@@ -115,7 +113,7 @@ const CreateScreen = () => {
           <br />
           <form className="mx-auto w-full max-w-md" onSubmit={handleOnSubmit}>
             <div className="flex flex-col gap-4">
-              <h2 className="font-bold text-center">Supplier Information</h2>
+              <h2 className="font-bold text-center">Supply Information</h2>
               <div className="flex gap-2">
                 <Input
                   id="name"
@@ -123,23 +121,16 @@ const CreateScreen = () => {
                   onChange={handleInputChange}
                 />
                 <Input
-                  id="address"
-                  topLeftLabel="Address"
+                  id="brand"
+                  topLeftLabel="Brand"
                   onChange={handleInputChange}
                 />
               </div>
-              <div className="flex gap-2">
-                <Input
-                  id="phone"
-                  topLeftLabel="Phone"
-                  onChange={handleInputChange}
-                />
-                <Input
-                  id="email"
-                  topLeftLabel="Email"
-                  onChange={handleInputChange}
-                />
-              </div>
+              <Input
+                id="type"
+                topLeftLabel="Type"
+                onChange={handleInputChange}
+              />
             </div>
             <br />
             <div className="flex flex-col gap-4">

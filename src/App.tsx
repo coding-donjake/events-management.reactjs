@@ -37,6 +37,10 @@ import SuppliersLogsScreen from "./screens/suppliers/LogsScreen";
 
 // supplies
 import SuppliesIndexScreen from "./screens/supplies/IndexScreen";
+import SuppliesCreateScreen from "./screens/supplies/CreateScreen";
+import SuppliesUpdateScreen from "./screens/supplies/UpdateScreen";
+import SuppliesViewScreen from "./screens/supplies/ViewScreen";
+import SuppliesLogsScreen from "./screens/supplies/LogsScreen";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -66,10 +70,13 @@ const App = () => {
         />
         {/* supplies */}
         <Route path="/supplies" element={<SuppliesIndexScreen />} />
-        <Route path="/supplies/create" element={null} />
-        <Route path="/supplies/update/:id" element={null} />
-        <Route path="/supplies/view/:id" element={null} />
-        <Route path="/supplies/view/:id/logs" element={null} />
+        <Route path="/supplies/create" element={<SuppliesCreateScreen />} />
+        <Route path="/supplies/update/:id" element={<SuppliesUpdateScreen />} />
+        <Route path="/supplies/view/:id" element={<SuppliesViewScreen />} />
+        <Route
+          path="/supplies/view/:id/logs"
+          element={<SuppliesLogsScreen />}
+        />
         {/* supplier */}
         <Route
           path="/supplies/supplier/create"

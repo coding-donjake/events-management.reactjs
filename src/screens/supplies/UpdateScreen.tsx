@@ -9,11 +9,11 @@ import { toast } from "react-toastify";
 import { fromISOToDateInput } from "../../services/Conversion";
 
 const UpdateScreen = () => {
-  document.title = "Update Supplier";
+  document.title = "Update Supply";
 
   const navigate = useNavigate();
   const { id } = useParams();
-  const [loadedSupplier, setLoadedSupplier] = useState<boolean>(false);
+  const [loadedSupply, setLoadedSupply] = useState<boolean>(false);
   const [updateFormProcessing, setUpdateFormProcessing] =
     useState<boolean>(false);
   const [formData, setFormData] = useState<{
@@ -21,9 +21,8 @@ const UpdateScreen = () => {
   }>({
     id: "",
     name: "",
-    address: "",
-    phone: "",
-    email: "",
+    brand: "",
+    type: "",
   });
 
   const handleInputChange = (
@@ -38,23 +37,23 @@ const UpdateScreen = () => {
     }));
   };
 
-  const selectSupplier = async () => {
-    setLoadedSupplier(false);
+  const selectSupply = async () => {
+    setLoadedSupply(false);
     try {
-      const response = await fetch("http://localhost:5000/supplier/select", {
+      const response = await fetch("http://localhost:5000/supply/select", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          supplier: { id: id },
+          supply: { id: id },
         }),
       });
       if (response.status === 500) {
-        setLoadedSupplier(true);
+        setLoadedSupply(true);
         toast.error("Internal server error!");
-        console.log("Failed to load supplier.");
+        console.log("Failed to load supply.");
         return;
       }
       if (response.ok) {
@@ -63,18 +62,17 @@ const UpdateScreen = () => {
           ...prevData,
           ["id"]: res.data.id,
           ["name"]: res.data.name,
-          ["address"]: res.data.address,
-          ["phone"]: res.data.phone,
-          ["email"]: res.data.email,
+          ["brand"]: res.data.brand,
+          ["type"]: res.data.type,
         }));
-        setLoadedSupplier(true);
+        setLoadedSupply(true);
         return;
       }
-      setLoadedSupplier(true);
+      setLoadedSupply(true);
       toast.error("Unkown error occured!");
       console.log(response);
     } catch (error) {
-      setLoadedSupplier(true);
+      setLoadedSupply(true);
       toast.error("Client error!");
       console.error("catch error:", error);
     }
@@ -100,19 +98,18 @@ const UpdateScreen = () => {
 
     try {
       setUpdateFormProcessing(true);
-      const response = await fetch("http://localhost:5000/supplier/update", {
+      const response = await fetch("http://localhost:5000/supply/update", {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          supplier: {
+          supply: {
             id: formData.id,
             name: formData.name,
-            address: formData.address,
-            phone: formData.phone,
-            email: formData.email,
+            brand: formData.brand,
+            type: formData.type,
           },
           password: formData.password,
         }),
@@ -128,7 +125,7 @@ const UpdateScreen = () => {
         return;
       }
       if (response.ok) {
-        toast.success("Update supplier success.");
+        toast.success("Update supply success.");
         navigate(-1);
         return;
       }
@@ -142,14 +139,14 @@ const UpdateScreen = () => {
   };
 
   useEffect(() => {
-    selectSupplier();
+    selectSupply();
   }, []);
 
   return (
     <div className="flex h-screen">
       <AdminNavigation />
       <div className="flex-1 h-screen p-4 overflow-auto">
-        <h1 className="flex-1 font-bold text-3xl">Suppliers</h1>
+        <h1 className="flex-1 font-bold text-3xl">Supplies</h1>
         <hr />
         <br />
         <div className="p-6 bg-white rounded-xl shadow-xl">
@@ -164,14 +161,14 @@ const UpdateScreen = () => {
             </div>
           </div>
           <br />
-          {!loadedSupplier ? (
+          {!loadedSupply ? (
             <div className="py-10 text-center">
               <span className="loading loading-dots loading-lg"></span>
             </div>
           ) : (
             <form className="mx-auto w-full max-w-md" onSubmit={handleOnSubmit}>
               <div className="flex flex-col gap-4">
-                <h2 className="font-bold text-center">Supplier Information</h2>
+                <h2 className="font-bold text-center">Supply Information</h2>
                 <div className="flex gap-2">
                   <Input
                     id="name"
@@ -180,26 +177,28 @@ const UpdateScreen = () => {
                     onChange={handleInputChange}
                   />
                   <Input
-                    id="address"
-                    topLeftLabel="Address"
-                    value={formData.address}
+                    id="brand"
+                    topLeftLabel="Brand"
+                    value={formData.brand}
                     onChange={handleInputChange}
                   />
                 </div>
-                <div className="flex gap-2">
-                  <Input
-                    id="phone"
-                    topLeftLabel="Phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                  />
-                  <Input
-                    id="email"
-                    topLeftLabel="Email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                  />
-                </div>
+                <Input
+                  id="type"
+                  topLeftLabel="Type"
+                  value={formData.type}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <br />
+              <div className="flex flex-col gap-4">
+                <h2 className="font-bold text-center">Confirm Operator</h2>
+                <Input
+                  type="password"
+                  id="password"
+                  topLeftLabel="Operator password"
+                  onChange={handleInputChange}
+                />
               </div>
               <br />
               <div className="flex justify-end">
