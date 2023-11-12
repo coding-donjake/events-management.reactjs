@@ -4,11 +4,11 @@ import { faChevronLeft, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, PrimaryButton } from "../../components/buttons";
 import { useNavigate } from "react-router-dom";
-import { Input, Select } from "../../components/inputs";
+import { Input } from "../../components/inputs";
 import { toast } from "react-toastify";
 
 const CreateScreen = () => {
-  document.title = "Create User";
+  document.title = "Create Supplier";
 
   const navigate = useNavigate();
   const [createFormProcessing, setCreateFormProcessing] =
@@ -16,15 +16,10 @@ const CreateScreen = () => {
   const [formData, setFormData] = useState<{
     [key: string]: string;
   }>({
-    username: "",
-    password: "",
-    role: "",
-    lastName: "",
-    firstName: "",
-    middleName: "",
-    suffix: "",
-    gender: "",
-    birthDate: "",
+    name: "",
+    address: "",
+    phone: "",
+    email: "",
   });
 
   const handleInputChange = (
@@ -59,24 +54,18 @@ const CreateScreen = () => {
 
     try {
       setCreateFormProcessing(true);
-      const response = await fetch("http://localhost:5000/admin/create", {
+      const response = await fetch("http://localhost:5000/supplier/create", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          admin: {
-            username: formData.username,
-            role: formData.role,
-          },
-          user: {
-            lastName: formData.lastName,
-            firstName: formData.firstName,
-            middleName: formData.middleName,
-            suffix: formData.suffix,
-            gender: formData.gender,
-            birthDate: new Date(formData.birthDate).toISOString(),
+          supplier: {
+            name: formData.name,
+            address: formData.address,
+            phone: formData.phone,
+            email: formData.email,
           },
           password: formData.password,
         }),
@@ -92,7 +81,7 @@ const CreateScreen = () => {
         return;
       }
       if (response.ok) {
-        toast.success("Create user success.");
+        toast.success("Create supplier success.");
         navigate(-1);
         return;
       }
@@ -109,7 +98,7 @@ const CreateScreen = () => {
     <div className="flex h-screen">
       <AdminNavigation />
       <div className="flex-1 h-screen p-4 overflow-auto">
-        <h1 className="flex-1 font-bold text-3xl">Users</h1>
+        <h1 className="flex-1 font-bold text-3xl">Suppliers</h1>
         <hr />
         <br />
         <div className="p-6 bg-white rounded-xl shadow-xl">
@@ -126,67 +115,28 @@ const CreateScreen = () => {
           <br />
           <form className="mx-auto w-full max-w-md" onSubmit={handleOnSubmit}>
             <div className="flex flex-col gap-4">
-              <h2 className="font-bold text-center">Account Information</h2>
+              <h2 className="font-bold text-center">Supplier Information</h2>
               <div className="flex gap-2">
                 <Input
-                  id="username"
-                  topLeftLabel="Username"
-                  onChange={handleInputChange}
-                />
-                <Select
-                  id="role"
-                  topLeftLabel="Role"
-                  options={[
-                    { label: "Select role", value: "" },
-                    { label: "Admin", value: "admin" },
-                    { label: "Staff", value: "staff" },
-                  ]}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-            <br />
-            <div className="flex flex-col gap-4">
-              <h2 className="font-bold text-center">Personal Information</h2>
-              <div className="flex gap-2">
-                <Input
-                  id="lastName"
-                  topLeftLabel="Last name"
+                  id="name"
+                  topLeftLabel="Name"
                   onChange={handleInputChange}
                 />
                 <Input
-                  id="firstName"
-                  topLeftLabel="First name"
+                  id="address"
+                  topLeftLabel="Address"
                   onChange={handleInputChange}
                 />
               </div>
               <div className="flex gap-2">
                 <Input
-                  id="middleName"
-                  topLeftLabel="Middle name (optional)"
+                  id="phone"
+                  topLeftLabel="Phone"
                   onChange={handleInputChange}
                 />
                 <Input
-                  id="suffix"
-                  topLeftLabel="Suffix (optional)"
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="flex gap-2">
-                <Select
-                  id="gender"
-                  topLeftLabel="Gender"
-                  options={[
-                    { label: "Select gender", value: "" },
-                    { label: "Male", value: "male" },
-                    { label: "Female", value: "female" },
-                  ]}
-                  onChange={handleInputChange}
-                />
-                <Input
-                  type="date"
-                  id="birthDate"
-                  topLeftLabel="Birth date"
+                  id="email"
+                  topLeftLabel="Email"
                   onChange={handleInputChange}
                 />
               </div>

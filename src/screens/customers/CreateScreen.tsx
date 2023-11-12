@@ -8,7 +8,7 @@ import { Input, Select } from "../../components/inputs";
 import { toast } from "react-toastify";
 
 const CreateScreen = () => {
-  document.title = "Create User";
+  document.title = "Create Customer";
 
   const navigate = useNavigate();
   const [createFormProcessing, setCreateFormProcessing] =
@@ -16,15 +16,15 @@ const CreateScreen = () => {
   const [formData, setFormData] = useState<{
     [key: string]: string;
   }>({
-    username: "",
-    password: "",
-    role: "",
     lastName: "",
     firstName: "",
     middleName: "",
     suffix: "",
     gender: "",
     birthDate: "",
+    address: "",
+    email: "",
+    phone: "",
   });
 
   const handleInputChange = (
@@ -59,17 +59,13 @@ const CreateScreen = () => {
 
     try {
       setCreateFormProcessing(true);
-      const response = await fetch("http://localhost:5000/admin/create", {
+      const response = await fetch("http://localhost:5000/customer/create", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          admin: {
-            username: formData.username,
-            role: formData.role,
-          },
           user: {
             lastName: formData.lastName,
             firstName: formData.firstName,
@@ -77,6 +73,15 @@ const CreateScreen = () => {
             suffix: formData.suffix,
             gender: formData.gender,
             birthDate: new Date(formData.birthDate).toISOString(),
+          },
+          customer: {
+            address: formData.address,
+          },
+          email: {
+            content: formData.email,
+          },
+          simcard: {
+            content: formData.phone,
           },
           password: formData.password,
         }),
@@ -109,7 +114,7 @@ const CreateScreen = () => {
     <div className="flex h-screen">
       <AdminNavigation />
       <div className="flex-1 h-screen p-4 overflow-auto">
-        <h1 className="flex-1 font-bold text-3xl">Users</h1>
+        <h1 className="flex-1 font-bold text-3xl">Customers</h1>
         <hr />
         <br />
         <div className="p-6 bg-white rounded-xl shadow-xl">
@@ -125,27 +130,6 @@ const CreateScreen = () => {
           </div>
           <br />
           <form className="mx-auto w-full max-w-md" onSubmit={handleOnSubmit}>
-            <div className="flex flex-col gap-4">
-              <h2 className="font-bold text-center">Account Information</h2>
-              <div className="flex gap-2">
-                <Input
-                  id="username"
-                  topLeftLabel="Username"
-                  onChange={handleInputChange}
-                />
-                <Select
-                  id="role"
-                  topLeftLabel="Role"
-                  options={[
-                    { label: "Select role", value: "" },
-                    { label: "Admin", value: "admin" },
-                    { label: "Staff", value: "staff" },
-                  ]}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-            <br />
             <div className="flex flex-col gap-4">
               <h2 className="font-bold text-center">Personal Information</h2>
               <div className="flex gap-2">
@@ -187,6 +171,27 @@ const CreateScreen = () => {
                   type="date"
                   id="birthDate"
                   topLeftLabel="Birth date"
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+            <br />
+            <div className="flex flex-col gap-4">
+              <h2 className="font-bold text-center">Contact Information</h2>
+              <Input
+                id="address"
+                topLeftLabel="Address"
+                onChange={handleInputChange}
+              />
+              <div className="flex gap-2">
+                <Input
+                  id="email"
+                  topLeftLabel="Email"
+                  onChange={handleInputChange}
+                />
+                <Input
+                  id="phone"
+                  topLeftLabel="Phone"
                   onChange={handleInputChange}
                 />
               </div>

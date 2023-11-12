@@ -9,11 +9,11 @@ import { toast } from "react-toastify";
 import { fromISOToDateInput } from "../../services/Conversion";
 
 const UpdateScreen = () => {
-  document.title = "Update User";
+  document.title = "Update Customer";
 
   const navigate = useNavigate();
   const { id } = useParams();
-  const [loadedAdmin, setLoadedAdmin] = useState<boolean>(false);
+  const [loadedCustomer, setLoadedCustomer] = useState<boolean>(false);
   const [updateFormProcessing, setUpdateFormProcessing] =
     useState<boolean>(false);
   const [formData, setFormData] = useState<{
@@ -21,15 +21,17 @@ const UpdateScreen = () => {
   }>({
     id: "",
     userId: "",
-    username: "",
-    password: "",
-    role: "",
+    emailId: "",
+    simcardId: "",
     lastName: "",
     firstName: "",
     middleName: "",
     suffix: "",
     gender: "",
     birthDate: "",
+    address: "",
+    email: "",
+    phone: "",
   });
 
   const handleInputChange = (
@@ -44,23 +46,23 @@ const UpdateScreen = () => {
     }));
   };
 
-  const selectAdmin = async () => {
-    setLoadedAdmin(false);
+  const selectCustomer = async () => {
+    setLoadedCustomer(false);
     try {
-      const response = await fetch("http://localhost:5000/admin/select", {
+      const response = await fetch("http://localhost:5000/customer/select", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          admin: { id: id },
+          customer: { id: id },
         }),
       });
       if (response.status === 500) {
-        setLoadedAdmin(true);
+        setLoadedCustomer(true);
         toast.error("Internal server error!");
-        console.log("Failed to load admin.");
+        console.log("Failed to load customer.");
         return;
       }
       if (response.ok) {
@@ -69,23 +71,26 @@ const UpdateScreen = () => {
           ...prevData,
           ["id"]: res.data.id,
           ["userId"]: res.data.User.id,
-          ["username"]: res.data.username,
-          ["role"]: res.data.role,
+          ["emailId"]: res.data.Email.id,
+          ["simcardId"]: res.data.Simcard.id,
           ["lastName"]: res.data.User.lastName,
           ["firstName"]: res.data.User.firstName,
           ["middleName"]: res.data.User.middleName,
           ["suffix"]: res.data.User.suffix,
           ["gender"]: res.data.User.gender,
           ["birthDate"]: fromISOToDateInput(res.data.User.birthDate),
+          ["address"]: res.data.address,
+          ["email"]: res.data.Email.content,
+          ["phone"]: res.data.Simcard.content,
         }));
-        setLoadedAdmin(true);
+        setLoadedCustomer(true);
         return;
       }
-      setLoadedAdmin(true);
+      setLoadedCustomer(true);
       toast.error("Unkown error occured!");
       console.log(response);
     } catch (error) {
-      setLoadedAdmin(true);
+      setLoadedCustomer(true);
       toast.error("Client error!");
       console.error("catch error:", error);
     }
@@ -111,18 +116,13 @@ const UpdateScreen = () => {
 
     try {
       setUpdateFormProcessing(true);
-      const response = await fetch("http://localhost:5000/admin/update", {
+      const response = await fetch("http://localhost:5000/customer/update", {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          admin: {
-            id: formData.id,
-            username: formData.username,
-            role: formData.role,
-          },
           user: {
             id: formData.userId,
             lastName: formData.lastName,
@@ -131,6 +131,18 @@ const UpdateScreen = () => {
             suffix: formData.suffix,
             gender: formData.gender,
             birthDate: new Date(formData.birthDate).toISOString(),
+          },
+          customer: {
+            id: formData.id,
+            address: formData.address,
+          },
+          email: {
+            id: formData.emailId,
+            content: formData.email,
+          },
+          simcard: {
+            id: formData.simcardId,
+            content: formData.phone,
           },
           password: formData.password,
         }),
@@ -146,7 +158,7 @@ const UpdateScreen = () => {
         return;
       }
       if (response.ok) {
-        toast.success("Update user success.");
+        toast.success("Update customer success.");
         navigate(-1);
         return;
       }
@@ -160,14 +172,14 @@ const UpdateScreen = () => {
   };
 
   useEffect(() => {
-    selectAdmin();
+    selectCustomer();
   }, []);
 
   return (
     <div className="flex h-screen">
       <AdminNavigation />
       <div className="flex-1 h-screen p-4 overflow-auto">
-        <h1 className="flex-1 font-bold text-3xl">Users</h1>
+        <h1 className="flex-1 font-bold text-3xl">Customers</h1>
         <hr />
         <br />
         <div className="p-6 bg-white rounded-xl shadow-xl">
@@ -182,46 +194,12 @@ const UpdateScreen = () => {
             </div>
           </div>
           <br />
-          {!loadedAdmin ? (
+          {!loadedCustomer ? (
             <div className="py-10 text-center">
               <span className="loading loading-dots loading-lg"></span>
             </div>
           ) : (
             <form className="mx-auto w-full max-w-md" onSubmit={handleOnSubmit}>
-              <div className="flex flex-col gap-4">
-                <h2 className="font-bold text-center">Account Information</h2>
-                <div className="flex gap-2">
-                  <Input
-                    id="username"
-                    topLeftLabel="Username"
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    readonly={true}
-                  />
-                  {formData.role === "owner" ? (
-                    <Input
-                      id="role"
-                      topLeftLabel="Role"
-                      value={formData.role}
-                      onChange={handleInputChange}
-                      readonly={true}
-                    />
-                  ) : (
-                    <Select
-                      id="role"
-                      topLeftLabel="Role"
-                      options={[
-                        { label: "Select role", value: "" },
-                        { label: "Admin", value: "admin" },
-                        { label: "Staff", value: "staff" },
-                      ]}
-                      value={formData.role}
-                      onChange={handleInputChange}
-                    />
-                  )}
-                </div>
-              </div>
-              <br />
               <div className="flex flex-col gap-4">
                 <h2 className="font-bold text-center">Personal Information</h2>
                 <div className="flex gap-2">
@@ -269,6 +247,30 @@ const UpdateScreen = () => {
                     id="birthDate"
                     topLeftLabel="Birth date"
                     value={formData.birthDate}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+              <br />
+              <div className="flex flex-col gap-4">
+                <h2 className="font-bold text-center">Contact Information</h2>
+                <Input
+                  id="address"
+                  topLeftLabel="Address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                />
+                <div className="flex gap-2">
+                  <Input
+                    id="email"
+                    topLeftLabel="Email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                  />
+                  <Input
+                    id="phone"
+                    topLeftLabel="Phone"
+                    value={formData.phone}
                     onChange={handleInputChange}
                   />
                 </div>

@@ -17,7 +17,7 @@ const ViewScreen = () => {
 
   const navigate = useNavigate();
   const { id } = useParams();
-  const [loadedAdmin, setLoadedAdmin] = useState<boolean>(false);
+  const [loadedCustomer, setLoadedCustomer] = useState<boolean>(false);
   const [formData, setFormData] = useState<{
     [key: string]: string;
   }>({
@@ -33,23 +33,23 @@ const ViewScreen = () => {
     birthDate: "",
   });
 
-  const selectAdmin = async () => {
-    setLoadedAdmin(false);
+  const selectCustomer = async () => {
+    setLoadedCustomer(false);
     try {
-      const response = await fetch("http://localhost:5000/admin/select", {
+      const response = await fetch("http://localhost:5000/customer/select", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          admin: { id: id },
+          customer: { id: id },
         }),
       });
       if (response.status === 500) {
-        setLoadedAdmin(true);
+        setLoadedCustomer(true);
         toast.error("Internal server error!");
-        console.log("Failed to load admin.");
+        console.log("Failed to load customer.");
         return;
       }
       if (response.ok) {
@@ -59,30 +59,33 @@ const ViewScreen = () => {
           ...prevData,
           ["id"]: res.data.id,
           ["userId"]: res.data.User.id,
-          ["username"]: res.data.username,
-          ["role"]: res.data.role,
+          ["emailId"]: res.data.Email.id,
+          ["simcardId"]: res.data.Simcard.id,
           ["lastName"]: res.data.User.lastName,
           ["firstName"]: res.data.User.firstName,
           ["middleName"]: res.data.User.middleName,
           ["suffix"]: res.data.User.suffix,
           ["gender"]: res.data.User.gender,
           ["birthDate"]: fromISOToDate(res.data.User.birthDate),
+          ["address"]: res.data.address,
+          ["email"]: res.data.Email.content,
+          ["phone"]: res.data.Simcard.content,
         }));
-        setLoadedAdmin(true);
+        setLoadedCustomer(true);
         return;
       }
-      setLoadedAdmin(true);
+      setLoadedCustomer(true);
       toast.error("Unkown error occured!");
       console.log(response);
     } catch (error) {
-      setLoadedAdmin(true);
+      setLoadedCustomer(true);
       toast.error("Client error!");
       console.error("catch error:", error);
     }
   };
 
   useEffect(() => {
-    selectAdmin();
+    selectCustomer();
   }, []);
 
   return (
@@ -109,32 +112,12 @@ const ViewScreen = () => {
             </div>
           </div>
           <br />
-          {!loadedAdmin ? (
+          {!loadedCustomer ? (
             <div className="py-10 text-center">
               <span className="loading loading-dots loading-lg"></span>
             </div>
           ) : (
             <form className="mx-auto w-full max-w-md">
-              <div className="flex flex-col gap-4">
-                <h2 className="font-bold text-center">Account Information</h2>
-                <div className="flex gap-2">
-                  <Input
-                    id="username"
-                    topLeftLabel="Username"
-                    value={formData.username}
-                    onChange={() => {}}
-                    readonly={true}
-                  />
-                  <Input
-                    id="role"
-                    topLeftLabel="Role"
-                    value={formData.role}
-                    onChange={() => {}}
-                    readonly={true}
-                  />
-                </div>
-              </div>
-              <br />
               <div className="flex flex-col gap-4">
                 <h2 className="font-bold text-center">Personal Information</h2>
                 <div className="flex gap-2">
@@ -187,6 +170,33 @@ const ViewScreen = () => {
                     id="birthDate"
                     topLeftLabel="Birth date"
                     value={formData.birthDate}
+                    onChange={() => {}}
+                    readonly={true}
+                  />
+                </div>
+              </div>
+              <br />
+              <div className="flex flex-col gap-4">
+                <h2 className="font-bold text-center">Contact Information</h2>
+                <Input
+                  id="address"
+                  topLeftLabel="Address"
+                  value={formData.address}
+                  onChange={() => {}}
+                  readonly={true}
+                />
+                <div className="flex gap-2">
+                  <Input
+                    id="email"
+                    topLeftLabel="Email"
+                    value={formData.email}
+                    onChange={() => {}}
+                    readonly={true}
+                  />
+                  <Input
+                    id="phone"
+                    topLeftLabel="Phone"
+                    value={formData.phone}
                     onChange={() => {}}
                     readonly={true}
                   />
