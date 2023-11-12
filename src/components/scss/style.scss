@@ -1,0 +1,42 @@
+.btn {
+  gap: 1rem;
+  .icon {
+    width: 1rem;
+    line-height: 0;
+    text-align: center;
+  }
+  .content {
+    @apply flex-1 text-right;
+  }
+}
+
+.card {
+  img {
+    @apply w-full object-cover;
+  }
+}
+
+.stat {
+  .stat-figure {
+    width: 2rem;
+  }
+}
+
+.table {
+  td {
+    // @apply p-0;
+  }
+}
+
+.spin-cw {
+  animation: spin-cw 0.5s linear infinite;
+}
+
+@keyframes spin-cw {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
