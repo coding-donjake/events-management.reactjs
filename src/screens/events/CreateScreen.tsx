@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AdminNavigation from "../../navigations/AdminNavigation";
 import { faChevronLeft, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,7 +8,7 @@ import { Input, Select } from "../../components/inputs";
 import { toast } from "react-toastify";
 
 const CreateScreen = () => {
-  document.title = "Create User";
+  document.title = "Create Event";
 
   const navigate = useNavigate();
   const [createFormProcessing, setCreateFormProcessing] =
@@ -16,15 +16,13 @@ const CreateScreen = () => {
   const [formData, setFormData] = useState<{
     [key: string]: string;
   }>({
-    username: "",
+    datetimeStarted: "",
+    type: "",
+    name: "",
+    address: "",
+    price: "",
+    customerId: "",
     password: "",
-    role: "",
-    lastName: "",
-    firstName: "",
-    middleName: "",
-    suffix: "",
-    gender: "",
-    birthDate: "",
   });
 
   const handleInputChange = (
@@ -59,24 +57,21 @@ const CreateScreen = () => {
 
     try {
       setCreateFormProcessing(true);
-      const response = await fetch("http://localhost:5000/admin/create", {
+      const response = await fetch("http://localhost:5000/event/create", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          admin: {
-            username: formData.username,
-            role: formData.role,
-          },
-          user: {
-            lastName: formData.lastName,
-            firstName: formData.firstName,
-            middleName: formData.middleName,
-            suffix: formData.suffix,
-            gender: formData.gender,
-            birthDate: new Date(formData.birthDate).toISOString(),
+          event: {
+            datetimeStarted: new Date(formData.datetimeStarted).toISOString(),
+            type: formData.type,
+            name: formData.name,
+            address: formData.address,
+            price: parseFloat(formData.price),
+            balance: parseFloat(formData.price),
+            customerId: formData.customerId,
           },
           password: formData.password,
         }),
@@ -105,11 +100,79 @@ const CreateScreen = () => {
     }
   };
 
+  // customer
+
+  const [customer, setCustomer] = useState<any>([]);
+  const [loadedCustomer, setLoadedCustomer] = useState<boolean>(false);
+  const [searchCustomerData, setSearchCustomerData] = useState({
+    key: "",
+    filterKey: "",
+  });
+
+  const [openRemoveCustomerModal, setOpenRemoveCustomerModal] =
+    useState<boolean>(false);
+  const [customerToRemove, setCustomerToRemove] = useState<string>("");
+  const [removeCustomerProcessing, setRemoveCustomerProcessing] =
+    useState<boolean>(false);
+
+  const handleSearchCustomerKeyChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setSearchCustomerData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const getCustomer = async () => {
+    setLoadedCustomer(false);
+    try {
+      const response = await fetch("http://localhost:5000/customer/get", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          key: searchCustomerData.key,
+          status: searchCustomerData.filterKey,
+        }),
+      });
+      if (response.status === 500) {
+        setLoadedCustomer(true);
+        toast.error("Internal server error!");
+        console.log("Failed to load customer.");
+        return;
+      }
+      if (response.ok) {
+        const res = await response.json();
+        console.log(res.data);
+        setCustomer(res.data);
+        setLoadedCustomer(true);
+        return;
+      }
+      setLoadedCustomer(true);
+      toast.error("Unkown error occured!");
+      console.log(response);
+    } catch (error) {
+      setLoadedCustomer(true);
+      toast.error("Client error!");
+      console.error("catch error:", error);
+    }
+  };
+
+  useEffect(() => {
+    getCustomer();
+  }, []);
+
   return (
     <div className="flex h-screen">
       <AdminNavigation />
       <div className="flex-1 h-screen p-4 overflow-auto">
-        <h1 className="flex-1 font-bold text-3xl">Users</h1>
+        <h1 className="flex-1 font-bold text-3xl">Events</h1>
         <hr />
         <br />
         <div className="p-6 bg-white rounded-xl shadow-xl">
@@ -124,93 +187,76 @@ const CreateScreen = () => {
             </div>
           </div>
           <br />
-          <form className="mx-auto w-full max-w-md" onSubmit={handleOnSubmit}>
-            <div className="flex flex-col gap-4">
-              <h2 className="font-bold text-center">Account Information</h2>
-              <div className="flex gap-2">
-                <Input
-                  id="username"
-                  topLeftLabel="Username"
-                  onChange={handleInputChange}
-                />
+          {loadedCustomer ? (
+            <form className="mx-auto w-full max-w-lg" onSubmit={handleOnSubmit}>
+              <div className="flex flex-col gap-4">
+                <h2 className="font-bold text-center">Event Information</h2>
                 <Select
-                  id="role"
-                  topLeftLabel="Role"
+                  topLeftLabel="Supplier"
+                  id="customerId"
                   options={[
-                    { label: "Select role", value: "" },
-                    { label: "Admin", value: "admin" },
-                    { label: "Staff", value: "staff" },
-                  ]}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-            <br />
-            <div className="flex flex-col gap-4">
-              <h2 className="font-bold text-center">Personal Information</h2>
-              <div className="flex gap-2">
-                <Input
-                  id="lastName"
-                  topLeftLabel="Last name"
-                  onChange={handleInputChange}
-                />
-                <Input
-                  id="firstName"
-                  topLeftLabel="First name"
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="flex gap-2">
-                <Input
-                  id="middleName"
-                  topLeftLabel="Middle name (optional)"
-                  onChange={handleInputChange}
-                />
-                <Input
-                  id="suffix"
-                  topLeftLabel="Suffix (optional)"
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="flex gap-2">
-                <Select
-                  id="gender"
-                  topLeftLabel="Gender"
-                  options={[
-                    { label: "Select gender", value: "" },
-                    { label: "Male", value: "male" },
-                    { label: "Female", value: "female" },
+                    { label: "Select customer", value: "" },
+                    ...customer.map((customer: any) => ({
+                      label: `${customer.User.lastName}, ${customer.User.firstName} ${customer.User.middleName} ${customer.User.suffix}`,
+                      value: customer.id,
+                    })),
                   ]}
                   onChange={handleInputChange}
                 />
                 <Input
-                  type="date"
-                  id="birthDate"
-                  topLeftLabel="Birth date"
+                  id="address"
+                  topLeftLabel="Address"
+                  onChange={handleInputChange}
+                />
+                <div className="flex gap-2">
+                  <Input
+                    type="datetime-local"
+                    id="datetimeStarted"
+                    topLeftLabel="Date Start"
+                    onChange={handleInputChange}
+                  />
+                  <Input
+                    type="number"
+                    id="price"
+                    topLeftLabel="Event price"
+                    min={0}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Input
+                    id="type"
+                    topLeftLabel="Event type"
+                    onChange={handleInputChange}
+                  />
+                  <Input
+                    id="name"
+                    topLeftLabel="Event name"
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+              <br />
+              <div className="flex flex-col gap-4">
+                <h2 className="font-bold text-center">Confirm Operator</h2>
+                <Input
+                  type="password"
+                  id="password"
+                  topLeftLabel="Operator password"
                   onChange={handleInputChange}
                 />
               </div>
-            </div>
-            <br />
-            <div className="flex flex-col gap-4">
-              <h2 className="font-bold text-center">Confirm Operator</h2>
-              <Input
-                type="password"
-                id="password"
-                topLeftLabel="Operator password"
-                onChange={handleInputChange}
-              />
-            </div>
-            <br />
-            <div className="flex justify-end">
-              <PrimaryButton
-                type="submit"
-                icon={<FontAwesomeIcon icon={faFloppyDisk} />}
-                content="Save"
-                processing={createFormProcessing}
-              />
-            </div>
-          </form>
+              <br />
+              <div className="flex justify-end">
+                <PrimaryButton
+                  type="submit"
+                  icon={<FontAwesomeIcon icon={faFloppyDisk} />}
+                  content="Save"
+                  processing={createFormProcessing}
+                />
+              </div>
+            </form>
+          ) : null}
         </div>
       </div>
     </div>

@@ -22,18 +22,18 @@ import { Input, Search } from "../../components/inputs";
 import { Modal } from "../../components/modals";
 
 const IndexScreen = () => {
-  document.title = "Users";
+  document.title = "Events";
 
   const navigate = useNavigate();
 
-  const [admin, setAdmin] = useState<any>([]);
-  const [loadedAdmin, setLoadedAdmin] = useState<boolean>(false);
+  const [event, setEvent] = useState<any>([]);
+  const [loadedEvent, setLoadedEvent] = useState<boolean>(false);
   const [formData, setFormData] = useState<{
     [key: string]: string;
   }>({
     password: "",
   });
-  const [searchAdminData, setSearchAdminData] = useState({
+  const [searchEventData, setSearchEventData] = useState({
     key: "",
     filterKey: "",
   });
@@ -50,68 +50,68 @@ const IndexScreen = () => {
     }));
   };
 
-  const handleSearchAdminKeyChange = (
+  const handleSearchEventKeyChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
     const { name, value } = e.target;
-    setSearchAdminData((prevData) => ({
+    setSearchEventData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
-  const getAdmin = async () => {
-    setLoadedAdmin(false);
+  const getEvent = async () => {
+    setLoadedEvent(false);
     try {
-      const response = await fetch("http://localhost:5000/admin/get", {
+      const response = await fetch("http://localhost:5000/event/get", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          key: searchAdminData.key,
-          status: searchAdminData.filterKey,
+          key: searchEventData.key,
+          status: searchEventData.filterKey,
         }),
       });
       if (response.status === 500) {
-        setLoadedAdmin(true);
+        setLoadedEvent(true);
         toast.error("Internal server error!");
-        console.log("Failed to load admin.");
+        console.log("Failed to load event.");
         return;
       }
       if (response.ok) {
         const res = await response.json();
         console.log(res.data);
-        setAdmin(res.data);
-        setLoadedAdmin(true);
+        setEvent(res.data);
+        setLoadedEvent(true);
         return;
       }
-      setLoadedAdmin(true);
+      setLoadedEvent(true);
       toast.error("Unkown error occured!");
       console.log(response);
     } catch (error) {
-      setLoadedAdmin(true);
+      setLoadedEvent(true);
       toast.error("Client error!");
       console.error("catch error:", error);
     }
   };
 
   const [openRemoveModal, setOpenRemoveModal] = useState<boolean>(false);
-  const [userToRemove, setUserToRemove] = useState<string>("");
+  const [eventToRemove, setUserToRemove] = useState<string>("");
   const [removeUserProcessing, setRemoveUserProcessing] =
     useState<boolean>(false);
 
-  const removeAdmin = async () => {
+  const removeEvent = async () => {
     if (removeUserProcessing) {
       return;
     }
 
     try {
       setRemoveUserProcessing(true);
-      const response = await fetch("http://localhost:5000/admin/update", {
+      const response = await fetch("http://localhost:5000/event/update", {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -119,8 +119,8 @@ const IndexScreen = () => {
         },
         body: JSON.stringify({
           password: formData.password,
-          admin: {
-            id: userToRemove,
+          event: {
+            id: eventToRemove,
             status: "removed",
           },
         }),
@@ -133,13 +133,13 @@ const IndexScreen = () => {
       if (response.status === 500) {
         setRemoveUserProcessing(false);
         toast.error("Internal server error!");
-        console.log("Failed to remove admin.");
+        console.log("Failed to remove event.");
         return;
       }
       if (response.ok) {
         setRemoveUserProcessing(false);
-        toast.success("Remove user success.");
-        getAdmin();
+        toast.success("Remove event success.");
+        getEvent();
         setOpenRemoveModal(false);
         return;
       }
@@ -154,23 +154,23 @@ const IndexScreen = () => {
   };
 
   useEffect(() => {
-    getAdmin();
+    getEvent();
   }, []);
 
   return (
     <div className="flex h-screen">
       <AdminNavigation />
       <div className="flex-1 h-screen p-4 overflow-auto">
-        <h1 className="flex-1 font-bold text-3xl">Users</h1>
+        <h1 className="flex-1 font-bold text-3xl">Events</h1>
         <hr />
         <br />
         <div className="p-6 bg-white rounded-xl shadow-xl">
           <div className="flex gap-4 mb-2">
-            <h1 className="flex-1 font-bold text-xl">Users List</h1>
+            <h1 className="flex-1 font-bold text-xl">Events List</h1>
             <div className="flex gap-2">
               <Button
                 icon={<FontAwesomeIcon icon={faPlus} />}
-                content="Create User"
+                content="Create Event"
                 onClick={() => navigate("create")}
               />
               <Search
@@ -180,52 +180,45 @@ const IndexScreen = () => {
                   { label: "Active", value: "active" },
                   { label: "Removed", value: "removed" },
                 ]}
-                onChange={handleSearchAdminKeyChange}
-                onClick={getAdmin}
+                onChange={handleSearchEventKeyChange}
+                onClick={getEvent}
               />
             </div>
           </div>
-          {!loadedAdmin ? (
+          {!loadedEvent ? (
             <div className="py-10 text-center">
               <span className="loading loading-dots loading-lg"></span>
             </div>
-          ) : admin.length <= 0 ? (
+          ) : event.length <= 0 ? (
             <div className="py-10 text-gray-500 text-center">
               <span className="text-6xl">
                 <FontAwesomeIcon icon={faFolderOpen} />
               </span>
-              <p>No admin record found.</p>
+              <p>No event record found.</p>
             </div>
           ) : (
             <RowTable
-              headers={[
-                "Username",
-                "Full Name",
-                "Gender",
-                "Role",
-                "Status",
-                "",
-              ]}
-              rows={admin.map((admin: any) => [
-                admin.username,
-                `${admin.User.lastName}, ${admin.User.firstName} ${admin.User.middleName} ${admin.User.suffix}`,
-                admin.User.gender,
-                admin.role,
-                admin.status === "removed" ? (
-                  <span className="text-red-500">{admin.status}</span>
+              headers={["Date Start", "Date End", "Type", "Name", "Status", ""]}
+              rows={event.map((event: any) => [
+                event.datetimeStarted,
+                event.datetimeEnded,
+                event.type,
+                event.name,
+                event.status === "removed" ? (
+                  <span className="text-red-500">{event.status}</span>
                 ) : (
-                  admin.status
+                  event.status
                 ),
                 <span className="flex gap-2 justify-end">
                   <InfoIconButton
                     icon={<FontAwesomeIcon icon={faPen} />}
-                    onClick={() => navigate(`update/${admin.id}`)}
+                    onClick={() => navigate(`update/${event.id}`)}
                   />
                   <InfoIconButton
                     icon={<FontAwesomeIcon icon={faEye} />}
-                    onClick={() => navigate(`view/${admin.id}`)}
+                    onClick={() => navigate(`view/${event.id}`)}
                   />
-                  {admin.role === "owner" || admin.status === "removed" ? (
+                  {event.role === "owner" || event.status === "removed" ? (
                     <ErrorIconButton
                       icon={<FontAwesomeIcon icon={faTrash} />}
                       disabled={true}
@@ -234,7 +227,7 @@ const IndexScreen = () => {
                     <ErrorIconButton
                       icon={<FontAwesomeIcon icon={faTrash} />}
                       onClick={() => {
-                        setUserToRemove(admin.id);
+                        setUserToRemove(event.id);
                         setOpenRemoveModal(true);
                       }}
                     />
@@ -250,7 +243,7 @@ const IndexScreen = () => {
           header="Remove User"
           content={
             <span>
-              Are you sure you want to remove this user record? This cannot be
+              Are you sure you want to remove this event record? This cannot be
               undone.
               <br />
               <br />
@@ -270,7 +263,7 @@ const IndexScreen = () => {
               icon={<FontAwesomeIcon icon={faCircleExclamation} />}
               content="Remove"
               processing={removeUserProcessing}
-              onClick={removeAdmin}
+              onClick={removeEvent}
             />,
           ]}
           onClose={() => setOpenRemoveModal(false)}
