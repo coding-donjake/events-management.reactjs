@@ -3,11 +3,13 @@ import AdminNavigation from "../../navigations/AdminNavigation";
 import { RowTable } from "../../components/tables";
 import {
   Button,
+  ErrorButton,
   ErrorIconButton,
   InfoIconButton,
 } from "../../components/buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faCircleExclamation,
   faEye,
   faFolderOpen,
   faPen,
@@ -16,7 +18,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Search } from "../../components/inputs";
+import { Input, Search } from "../../components/inputs";
+import { Modal } from "../../components/modals";
 
 const IndexScreen = () => {
   document.title = "Customers";
@@ -29,6 +32,23 @@ const IndexScreen = () => {
     key: "",
     filterKey: "",
   });
+  const [formData, setFormData] = useState<{
+    [key: string]: string;
+  }>({
+    password: "",
+  });
+
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   const handleSearchCustomerKeyChange = (
     e: React.ChangeEvent<
@@ -74,6 +94,60 @@ const IndexScreen = () => {
       console.log(response);
     } catch (error) {
       setLoadedCustomer(true);
+      toast.error("Client error!");
+      console.error("catch error:", error);
+    }
+  };
+
+  const [openRemoveModal, setOpenRemoveModal] = useState<boolean>(false);
+  const [customerToRemove, setCustomerToRemove] = useState<string>("");
+  const [removeCustomerProcessing, setRemoveCustomerProcessing] =
+    useState<boolean>(false);
+
+  const removeAdmin = async () => {
+    if (removeCustomerProcessing) {
+      return;
+    }
+
+    try {
+      setRemoveCustomerProcessing(true);
+      const response = await fetch("http://localhost:5000/customer/update", {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: formData.password,
+          customer: {
+            id: customerToRemove,
+            status: "removed",
+          },
+        }),
+      });
+      if (response.status === 401) {
+        toast.error("Invalid operator credentials.");
+        setRemoveCustomerProcessing(false);
+        return;
+      }
+      if (response.status === 500) {
+        setRemoveCustomerProcessing(false);
+        toast.error("Internal server error!");
+        console.log("Failed to remove customer.");
+        return;
+      }
+      if (response.ok) {
+        setRemoveCustomerProcessing(false);
+        toast.success("Remove user success.");
+        getCustomer();
+        setOpenRemoveModal(false);
+        return;
+      }
+      setRemoveCustomerProcessing(false);
+      toast.error("Unkown error occured!");
+      console.log(response);
+    } catch (error) {
+      setRemoveCustomerProcessing(false);
       toast.error("Client error!");
       console.error("catch error:", error);
     }
@@ -130,7 +204,11 @@ const IndexScreen = () => {
                 customer.User.gender,
                 customer.Email.content,
                 customer.Simcard.content,
-                customer.status,
+                customer.status === "removed" ? (
+                  <span className="text-red-500">{customer.status}</span>
+                ) : (
+                  customer.status
+                ),
                 <span className="flex gap-2 justify-end">
                   <InfoIconButton
                     icon={<FontAwesomeIcon icon={faPen} />}
@@ -140,16 +218,57 @@ const IndexScreen = () => {
                     icon={<FontAwesomeIcon icon={faEye} />}
                     onClick={() => navigate(`view/${customer.id}`)}
                   />
-                  <ErrorIconButton
-                    icon={<FontAwesomeIcon icon={faTrash} />}
-                    onClick={() => {}}
-                  />
+                  {customer.status === "removed" ? (
+                    <ErrorIconButton
+                      icon={<FontAwesomeIcon icon={faTrash} />}
+                      disabled={true}
+                    />
+                  ) : (
+                    <ErrorIconButton
+                      icon={<FontAwesomeIcon icon={faTrash} />}
+                      onClick={() => {
+                        setCustomerToRemove(customer.id);
+                        setOpenRemoveModal(true);
+                      }}
+                    />
+                  )}
                 </span>,
               ])}
             />
           )}
         </div>
       </div>
+      {openRemoveModal ? (
+        <Modal
+          header="Remove Customer"
+          content={
+            <span>
+              Are you sure you want to remove this customer record? This cannot
+              be undone.
+              <br />
+              <br />
+              <hr />
+              <div className="flex flex-col gap-4">
+                <Input
+                  type="password"
+                  id="password"
+                  topLeftLabel="Operator password"
+                  onChange={handleInputChange}
+                />
+              </div>
+            </span>
+          }
+          modalActions={[
+            <ErrorButton
+              icon={<FontAwesomeIcon icon={faCircleExclamation} />}
+              content="Remove"
+              processing={removeCustomerProcessing}
+              onClick={removeAdmin}
+            />,
+          ]}
+          onClose={() => setOpenRemoveModal(false)}
+        />
+      ) : null}
     </div>
   );
 };

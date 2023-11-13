@@ -7,6 +7,7 @@ interface ButtonProps {
   hint?: string;
   processing?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  disabled?: boolean;
 }
 
 export const Button = ({
@@ -15,9 +16,10 @@ export const Button = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn" type={type} onClick={onClick}>
+    <button className="btn" type={type} onClick={onClick} disabled={disabled}>
       {icon ? (
         <div className="icon">
           {processing ? (
@@ -38,9 +40,15 @@ export const NeutralButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn btn-neutral" type={type} onClick={onClick}>
+    <button
+      className="btn btn-neutral"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <div className="icon">
           {processing ? (
@@ -61,9 +69,15 @@ export const PrimaryButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn btn-primary" type={type} onClick={onClick}>
+    <button
+      className="btn btn-primary"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <div className="icon">
           {processing ? (
@@ -84,9 +98,15 @@ export const SecondaryButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn btn-secondary" type={type} onClick={onClick}>
+    <button
+      className="btn btn-secondary"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <div className="icon">
           {processing ? (
@@ -107,9 +127,15 @@ export const AccentButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn btn-accent" type={type} onClick={onClick}>
+    <button
+      className="btn btn-accent"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <div className="icon">
           {processing ? (
@@ -130,9 +156,15 @@ export const GhostButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn btn-ghost" type={type} onClick={onClick}>
+    <button
+      className="btn btn-ghost"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <div className="icon">
           {processing ? (
@@ -153,9 +185,15 @@ export const LinkButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn btn-link" type={type} onClick={onClick}>
+    <button
+      className="btn btn-link"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <div className="icon">
           {processing ? (
@@ -176,9 +214,15 @@ export const InfoButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn btn-info" type={type} onClick={onClick}>
+    <button
+      className="btn btn-info"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <div className="icon">
           {processing ? (
@@ -199,9 +243,15 @@ export const SuccessButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn btn-success" type={type} onClick={onClick}>
+    <button
+      className="btn btn-success"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <div className="icon">
           {processing ? (
@@ -222,9 +272,15 @@ export const WarningButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn btn-warning" type={type} onClick={onClick}>
+    <button
+      className="btn btn-warning"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <div className="icon">
           {processing ? (
@@ -245,9 +301,15 @@ export const ErrorButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn btn-error" type={type} onClick={onClick}>
+    <button
+      className="btn btn-error"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <div className="icon">
           {processing ? (
@@ -268,9 +330,15 @@ export const OutlinedButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn btn-outline" type={type} onClick={onClick}>
+    <button
+      className="btn btn-outline"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <div className="icon">
           {processing ? (
@@ -291,12 +359,14 @@ export const PrimaryOutlinedButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-outline btn-primary"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <div className="icon">
@@ -318,12 +388,14 @@ export const SecondaryOutlinedButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-outline btn-secondary"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <div className="icon">
@@ -345,12 +417,14 @@ export const AccentOutlinedButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-outline btn-accent"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <div className="icon">
@@ -372,9 +446,15 @@ export const InfoOutlinedButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn btn-outline btn-info" type={type} onClick={onClick}>
+    <button
+      className="btn btn-outline btn-info"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <div className="icon">
           {processing ? (
@@ -395,12 +475,14 @@ export const SuccessOutlinedButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-outline btn-success"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <div className="icon">
@@ -422,12 +504,14 @@ export const WarningOutlinedButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-outline btn-warning"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <div className="icon">
@@ -449,9 +533,15 @@ export const ErrorOutlinedButton = ({
   content,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn btn-outline btn-error" type={type} onClick={onClick}>
+    <button
+      className="btn btn-outline btn-error"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <div className="icon">
           {processing ? (
@@ -471,9 +561,15 @@ export const IconButton = ({
   icon,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn btn-square btn-sm" type={type} onClick={onClick}>
+    <button
+      className="btn btn-square btn-sm"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <span className="icon">
           {processing ? (
@@ -492,12 +588,14 @@ export const NeutralIconButton = ({
   icon,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-square btn-sm btn-neutral"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <span className="icon">
@@ -517,12 +615,14 @@ export const PrimaryIconButton = ({
   icon,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-square btn-sm btn-primary"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <span className="icon">
@@ -542,12 +642,14 @@ export const SecondaryIconButton = ({
   icon,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-square btn-sm btn-secondary"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <span className="icon">
@@ -567,12 +669,14 @@ export const AccentIconButton = ({
   icon,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-square btn-sm btn-accent"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <span className="icon">
@@ -592,12 +696,14 @@ export const GhostIconButton = ({
   icon,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-square btn-sm btn-ghost"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <span className="icon">
@@ -617,12 +723,14 @@ export const LinkIconButton = ({
   icon,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-square btn-sm btn-link"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <span className="icon">
@@ -642,12 +750,14 @@ export const InfoIconButton = ({
   icon,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-square btn-sm btn-info"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <span className="icon">
@@ -667,12 +777,14 @@ export const SuccessIconButton = ({
   icon,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-square btn-sm btn-success"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <span className="icon">
@@ -692,12 +804,14 @@ export const WarningIconButton = ({
   icon,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-square btn-sm btn-warning"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <span className="icon">
@@ -717,12 +831,14 @@ export const ErrorIconButton = ({
   icon,
   processing,
   onClick,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       className="btn btn-square btn-sm btn-error"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon ? (
         <span className="icon">

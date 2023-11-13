@@ -3,11 +3,13 @@ import AdminNavigation from "../../navigations/AdminNavigation";
 import { RowTable } from "../../components/tables";
 import {
   Button,
+  ErrorButton,
   ErrorIconButton,
   InfoIconButton,
 } from "../../components/buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faCircleExclamation,
   faEye,
   faFolderOpen,
   faPen,
@@ -16,7 +18,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Search } from "../../components/inputs";
+import { Input, Search } from "../../components/inputs";
+import { Modal } from "../../components/modals";
 
 const IndexScreen = () => {
   document.title = "Users";
@@ -25,10 +28,27 @@ const IndexScreen = () => {
 
   const [admin, setAdmin] = useState<any>([]);
   const [loadedAdmin, setLoadedAdmin] = useState<boolean>(false);
+  const [formData, setFormData] = useState<{
+    [key: string]: string;
+  }>({
+    password: "",
+  });
   const [searchAdminData, setSearchAdminData] = useState({
     key: "",
     filterKey: "",
   });
+
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   const handleSearchAdminKeyChange = (
     e: React.ChangeEvent<
@@ -74,6 +94,60 @@ const IndexScreen = () => {
       console.log(response);
     } catch (error) {
       setLoadedAdmin(true);
+      toast.error("Client error!");
+      console.error("catch error:", error);
+    }
+  };
+
+  const [openRemoveModal, setOpenRemoveModal] = useState<boolean>(false);
+  const [userToRemove, setUserToRemove] = useState<string>("");
+  const [removeUserProcessing, setRemoveUserProcessing] =
+    useState<boolean>(false);
+
+  const removeAdmin = async () => {
+    if (removeUserProcessing) {
+      return;
+    }
+
+    try {
+      setRemoveUserProcessing(true);
+      const response = await fetch("http://localhost:5000/admin/update", {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: formData.password,
+          admin: {
+            id: userToRemove,
+            status: "removed",
+          },
+        }),
+      });
+      if (response.status === 401) {
+        toast.error("Invalid operator credentials.");
+        setRemoveUserProcessing(false);
+        return;
+      }
+      if (response.status === 500) {
+        setRemoveUserProcessing(false);
+        toast.error("Internal server error!");
+        console.log("Failed to remove admin.");
+        return;
+      }
+      if (response.ok) {
+        setRemoveUserProcessing(false);
+        toast.success("Remove user success.");
+        getAdmin();
+        setOpenRemoveModal(false);
+        return;
+      }
+      setRemoveUserProcessing(false);
+      toast.error("Unkown error occured!");
+      console.log(response);
+    } catch (error) {
+      setRemoveUserProcessing(false);
       toast.error("Client error!");
       console.error("catch error:", error);
     }
@@ -137,7 +211,11 @@ const IndexScreen = () => {
                 `${admin.User.lastName}, ${admin.User.firstName} ${admin.User.middleName} ${admin.User.suffix}`,
                 admin.User.gender,
                 admin.role,
-                admin.status,
+                admin.status === "removed" ? (
+                  <span className="text-red-500">{admin.status}</span>
+                ) : (
+                  admin.status
+                ),
                 <span className="flex gap-2 justify-end">
                   <InfoIconButton
                     icon={<FontAwesomeIcon icon={faPen} />}
@@ -147,16 +225,57 @@ const IndexScreen = () => {
                     icon={<FontAwesomeIcon icon={faEye} />}
                     onClick={() => navigate(`view/${admin.id}`)}
                   />
-                  <ErrorIconButton
-                    icon={<FontAwesomeIcon icon={faTrash} />}
-                    onClick={() => {}}
-                  />
+                  {admin.role === "owner" || admin.status === "removed" ? (
+                    <ErrorIconButton
+                      icon={<FontAwesomeIcon icon={faTrash} />}
+                      disabled={true}
+                    />
+                  ) : (
+                    <ErrorIconButton
+                      icon={<FontAwesomeIcon icon={faTrash} />}
+                      onClick={() => {
+                        setUserToRemove(admin.id);
+                        setOpenRemoveModal(true);
+                      }}
+                    />
+                  )}
                 </span>,
               ])}
             />
           )}
         </div>
       </div>
+      {openRemoveModal ? (
+        <Modal
+          header="Remove User"
+          content={
+            <span>
+              Are you sure you want to remove this user record? This cannot be
+              undone.
+              <br />
+              <br />
+              <hr />
+              <div className="flex flex-col gap-4">
+                <Input
+                  type="password"
+                  id="password"
+                  topLeftLabel="Operator password"
+                  onChange={handleInputChange}
+                />
+              </div>
+            </span>
+          }
+          modalActions={[
+            <ErrorButton
+              icon={<FontAwesomeIcon icon={faCircleExclamation} />}
+              content="Remove"
+              processing={removeUserProcessing}
+              onClick={removeAdmin}
+            />,
+          ]}
+          onClose={() => setOpenRemoveModal(false)}
+        />
+      ) : null}
     </div>
   );
 };
