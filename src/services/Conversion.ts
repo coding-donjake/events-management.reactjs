@@ -33,6 +33,17 @@ export const fromISOToDateInput = (value: string) => {
   return `${year}-${month}-${day}`;
 };
 
+export const fromISOToDateTimeInput = (value: string) => {
+  const date = new Date(value);
+  const year = date.getFullYear().toString().padStart(4, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  const hours = addZero(date.getHours());
+  const minutes = addZero(date.getMinutes());
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
+
 export const fromISOToDateTime12hr = (value: string) => {
   const date = new Date(value);
   const day = addZero(date.getDate());

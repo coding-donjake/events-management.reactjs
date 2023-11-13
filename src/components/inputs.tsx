@@ -10,7 +10,7 @@ interface InputProps {
   topRightLabel?: ReactNode;
   bottomLeftLabel?: ReactNode;
   bottomRightLabel?: ReactNode;
-  type?: "text" | "password" | "email" | "number" | "date";
+  type?: "text" | "password" | "email" | "number" | "date" | "datetime-local";
   id?: string;
   min?: number;
   max?: number;

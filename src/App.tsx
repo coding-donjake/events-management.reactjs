@@ -29,6 +29,12 @@ import CustomersUpdateScreen from "./screens/customers/UpdateScreen";
 import CustomersViewScreen from "./screens/customers/ViewScreen";
 import CustomersLogsScreen from "./screens/customers/LogsScreen";
 
+// orders
+import OrdersCreateScreen from "./screens/orders/CreateScreen";
+import OrdersUpdateScreen from "./screens/orders/UpdateScreen";
+import OrdersViewScreen from "./screens/orders/ViewScreen";
+import OrdersLogsScreen from "./screens/orders/LogsScreen";
+
 // suppliers
 import SuppliersCreateScreen from "./screens/suppliers/CreateScreen";
 import SuppliersUpdateScreen from "./screens/suppliers/UpdateScreen";
@@ -41,6 +47,13 @@ import SuppliesCreateScreen from "./screens/supplies/CreateScreen";
 import SuppliesUpdateScreen from "./screens/supplies/UpdateScreen";
 import SuppliesViewScreen from "./screens/supplies/ViewScreen";
 import SuppliesLogsScreen from "./screens/supplies/LogsScreen";
+
+// events
+import EventsIndexScreen from "./screens/events/IndexScreen";
+import EventsCreateScreen from "./screens/events/CreateScreen";
+import EventsUpdateScreen from "./screens/events/UpdateScreen";
+import EventsViewScreen from "./screens/events/ViewScreen";
+import EventsLogsScreen from "./screens/events/LogsScreen";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -94,12 +107,23 @@ const App = () => {
           path="/supplies/supplier/view/:id/logs"
           element={<SuppliersLogsScreen />}
         />
+        {/* order */}
+        <Route path="/supplies/order/create" element={<OrdersCreateScreen />} />
+        <Route
+          path="/supplies/order/update/:id"
+          element={<OrdersUpdateScreen />}
+        />
+        <Route path="/supplies/order/view/:id" element={<OrdersViewScreen />} />
+        <Route
+          path="/supplies/order/view/:id/logs"
+          element={<OrdersLogsScreen />}
+        />
         {/* events */}
-        <Route path="/events" element={null} />
-        <Route path="/events/create" element={null} />
-        <Route path="/events/update/:id" element={null} />
-        <Route path="/events/view/:id" element={null} />
-        <Route path="/events/view/:id/logs" element={null} />
+        <Route path="/events" element={<EventsIndexScreen />} />
+        <Route path="/events/create" element={<EventsCreateScreen />} />
+        <Route path="/events/update/:id" element={<EventsUpdateScreen />} />
+        <Route path="/events/view/:id" element={<EventsViewScreen />} />
+        <Route path="/events/view/:id/logs" element={<EventsLogsScreen />} />
       </Route>
     )
   );

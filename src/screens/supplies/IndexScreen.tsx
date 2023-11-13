@@ -318,6 +318,7 @@ const IndexScreen = () => {
       }
       if (response.ok) {
         const res = await response.json();
+        console.log("target");
         console.log(res.data);
         setOrder(res.data);
         setLoadedOrder(true);
@@ -352,6 +353,7 @@ const IndexScreen = () => {
             id: orderToRemove,
             status: "removed",
           },
+          orderSupply: [],
         }),
       });
       if (response.status === 401) {
@@ -597,6 +599,7 @@ const IndexScreen = () => {
                   order.datetimeExpected,
                   order.datetimeArrived,
                   totalQuantity > 0 ? `${totalQuantity} pcs` : "0 pc",
+                  order.Supplier.name,
                   order.status === "removed" ? (
                     <span className="text-red-500">{order.status}</span>
                   ) : (
@@ -692,6 +695,37 @@ const IndexScreen = () => {
             />,
           ]}
           onClose={() => setOpenRemoveSupplyModal(false)}
+        />
+      ) : null}
+      {openRemoveOrderModal ? (
+        <Modal
+          header="Remove Order"
+          content={
+            <span>
+              Are you sure you want to remove this order record? This cannot be
+              undone.
+              <br />
+              <br />
+              <hr />
+              <div className="flex flex-col gap-4">
+                <Input
+                  type="password"
+                  id="password"
+                  topLeftLabel="Operator password"
+                  onChange={handleInputChange}
+                />
+              </div>
+            </span>
+          }
+          modalActions={[
+            <ErrorButton
+              icon={<FontAwesomeIcon icon={faCircleExclamation} />}
+              content="Remove"
+              processing={removeOrderProcessing}
+              onClick={removeOrder}
+            />,
+          ]}
+          onClose={() => setOpenRemoveOrderModal(false)}
         />
       ) : null}
     </div>
