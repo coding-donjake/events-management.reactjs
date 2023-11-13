@@ -131,7 +131,7 @@ const IndexScreen = () => {
                 customer.Email.content,
                 customer.Simcard.content,
                 customer.status,
-                <span className="flex gap-2">
+                <span className="flex gap-2 justify-end">
                   <InfoIconButton
                     icon={<FontAwesomeIcon icon={faPen} />}
                     onClick={() => navigate(`update/${customer.id}`)}

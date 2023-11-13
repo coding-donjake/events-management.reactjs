@@ -138,7 +138,7 @@ const IndexScreen = () => {
                 admin.User.gender,
                 admin.role,
                 admin.status,
-                <span className="flex gap-2">
+                <span className="flex gap-2 justify-end">
                   <InfoIconButton
                     icon={<FontAwesomeIcon icon={faPen} />}
                     onClick={() => navigate(`update/${admin.id}`)}

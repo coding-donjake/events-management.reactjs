@@ -187,7 +187,7 @@ const IndexScreen = () => {
                 supplier.address,
                 supplier.phone,
                 supplier.status,
-                <span className="flex gap-2">
+                <span className="flex gap-2 justify-end">
                   <InfoIconButton
                     icon={<FontAwesomeIcon icon={faPen} />}
                     onClick={() => navigate(`supplier/update/${supplier.id}`)}
@@ -246,7 +246,7 @@ const IndexScreen = () => {
                 supply.brand,
                 supply.type,
                 supply.status,
-                <span className="flex gap-2">
+                <span className="flex gap-2 justify-end">
                   <InfoIconButton
                     icon={<FontAwesomeIcon icon={faPen} />}
                     onClick={() => navigate(`update/${supply.id}`)}

@@ -202,6 +202,16 @@ const UpdateScreen = () => {
                 </div>
               </div>
               <br />
+              <div className="flex flex-col gap-4">
+                <h2 className="font-bold text-center">Confirm Operator</h2>
+                <Input
+                  type="password"
+                  id="password"
+                  topLeftLabel="Operator password"
+                  onChange={handleInputChange}
+                />
+              </div>
+              <br />
               <div className="flex justify-end">
                 <PrimaryButton
                   type="submit"
