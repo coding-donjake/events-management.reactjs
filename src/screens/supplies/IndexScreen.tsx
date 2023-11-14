@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Input, Search } from "../../components/inputs";
 import { Modal } from "../../components/modals";
+import { fromISOToDateTime12hr } from "../../services/Conversion";
 
 const IndexScreen = () => {
   document.title = "Supplies";
@@ -595,9 +596,9 @@ const IndexScreen = () => {
                 );
 
                 return [
-                  order.datetimeOrdered,
-                  order.datetimeExpected,
-                  order.datetimeArrived,
+                  fromISOToDateTime12hr(order.datetimeOrdered),
+                  fromISOToDateTime12hr(order.datetimeExpected),
+                  fromISOToDateTime12hr(order.datetimeArrived),
                   totalQuantity > 0 ? `${totalQuantity} pcs` : "0 pc",
                   order.Supplier.name,
                   order.status === "removed" ? (
@@ -606,15 +607,23 @@ const IndexScreen = () => {
                     order.status
                   ),
                   <span className="flex gap-2 justify-end">
-                    <InfoIconButton
-                      icon={<FontAwesomeIcon icon={faPen} />}
-                      onClick={() => navigate(`order/update/${order.id}`)}
-                    />
+                    {order.status === "arrived" ? (
+                      <InfoIconButton
+                        icon={<FontAwesomeIcon icon={faPen} />}
+                        disabled={true}
+                      />
+                    ) : (
+                      <InfoIconButton
+                        icon={<FontAwesomeIcon icon={faPen} />}
+                        onClick={() => navigate(`order/update/${order.id}`)}
+                      />
+                    )}
                     <InfoIconButton
                       icon={<FontAwesomeIcon icon={faEye} />}
                       onClick={() => navigate(`order/view/${order.id}`)}
                     />
-                    {order.status === "removed" ? (
+                    {order.status === "removed" ||
+                    order.status === "arrived" ? (
                       <ErrorIconButton
                         icon={<FontAwesomeIcon icon={faTrash} />}
                         disabled={true}
