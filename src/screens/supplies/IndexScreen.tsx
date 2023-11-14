@@ -596,9 +596,21 @@ const IndexScreen = () => {
                 );
 
                 return [
-                  fromISOToDateTime12hr(order.datetimeOrdered),
-                  fromISOToDateTime12hr(order.datetimeExpected),
-                  fromISOToDateTime12hr(order.datetimeArrived),
+                  order.datetimeOrdered ? (
+                    fromISOToDateTime12hr(order.datetimeOrdered)
+                  ) : (
+                    <span className="text-red-500">Not Available</span>
+                  ),
+                  order.datetimeExpected ? (
+                    fromISOToDateTime12hr(order.datetimeExpected)
+                  ) : (
+                    <span className="text-red-500">Not Available</span>
+                  ),
+                  order.datetimeArrived ? (
+                    fromISOToDateTime12hr(order.datetimeArrived)
+                  ) : (
+                    <span className="text-red-500">Not Available</span>
+                  ),
                   totalQuantity > 0 ? `${totalQuantity} pcs` : "0 pc",
                   order.Supplier.name,
                   order.status === "removed" ? (

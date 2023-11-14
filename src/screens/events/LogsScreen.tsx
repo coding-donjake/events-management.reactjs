@@ -13,58 +13,58 @@ import { RowTable } from "../../components/tables";
 import { fromISOToDateTime12hr } from "../../services/Conversion";
 
 const LogsScreen = () => {
-  document.title = "View User";
+  document.title = "View Event";
 
   const navigate = useNavigate();
   const { id } = useParams();
-  const [admin, setAdmin] = useState<any>([]);
-  const [loadedAdmin, setLoadedAdmin] = useState<boolean>(false);
+  const [event, setEvent] = useState<any>([]);
+  const [loadedEvent, setLoadedEvent] = useState<boolean>(false);
 
-  const selectAdmin = async () => {
-    setLoadedAdmin(false);
+  const selectEvent = async () => {
+    setLoadedEvent(false);
     try {
-      const response = await fetch("http://localhost:5000/admin/select", {
+      const response = await fetch("http://localhost:5000/event/select", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          admin: { id: id },
+          event: { id: id },
         }),
       });
       if (response.status === 500) {
-        setLoadedAdmin(true);
+        setLoadedEvent(true);
         toast.error("Internal server error!");
-        console.log("Failed to load admin.");
+        console.log("Failed to load event.");
         return;
       }
       if (response.ok) {
         const res = await response.json();
         console.log(res.data);
-        setAdmin(res.data);
-        setLoadedAdmin(true);
+        setEvent(res.data);
+        setLoadedEvent(true);
         return;
       }
-      setLoadedAdmin(true);
+      setLoadedEvent(true);
       toast.error("Unkown error occured!");
       console.log(response);
     } catch (error) {
-      setLoadedAdmin(true);
+      setLoadedEvent(true);
       toast.error("Client error!");
       console.error("catch error:", error);
     }
   };
 
   useEffect(() => {
-    selectAdmin();
+    selectEvent();
   }, []);
 
   return (
     <div className="flex h-screen">
       <AdminNavigation />
       <div className="flex-1 h-screen p-4 overflow-auto">
-        <h1 className="flex-1 font-bold text-3xl">Users</h1>
+        <h1 className="flex-1 font-bold text-3xl">Events</h1>
         <hr />
         <br />
         <div className="p-6 bg-white rounded-xl shadow-xl">
@@ -79,14 +79,14 @@ const LogsScreen = () => {
             </div>
           </div>
           <br />
-          {!loadedAdmin ? (
+          {!loadedEvent ? (
             <div className="py-10 text-center">
               <span className="loading loading-dots loading-lg"></span>
             </div>
           ) : (
             <RowTable
               headers={["Date & Time", "Type", "Operator"]}
-              rows={admin.AdminLog.map((log: any) => [
+              rows={event.EventLog.map((log: any) => [
                 fromISOToDateTime12hr(log.datetime),
                 log.type,
                 `${log.Operator.lastName}, ${log.Operator.firstName} ${log.Operator.middleName} ${log.Operator.suffix}`,

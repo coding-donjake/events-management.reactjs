@@ -55,6 +55,10 @@ import EventsUpdateScreen from "./screens/events/UpdateScreen";
 import EventsViewScreen from "./screens/events/ViewScreen";
 import EventsLogsScreen from "./screens/events/LogsScreen";
 
+// event-supplies
+import EventSuppliesUpdateScreen from "./screens/event-supplies/UpdateScreen";
+import EventPaymentCreateScreen from "./screens/event-payments/CreateScreen";
+
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -124,6 +128,15 @@ const App = () => {
         <Route path="/events/update/:id" element={<EventsUpdateScreen />} />
         <Route path="/events/view/:id" element={<EventsViewScreen />} />
         <Route path="/events/view/:id/logs" element={<EventsLogsScreen />} />
+        {/* event-supplies */}
+        <Route
+          path="/events/view/:id/event-supplies"
+          element={<EventSuppliesUpdateScreen />}
+        />
+        <Route
+          path="/events/view/:id/add-payment"
+          element={<EventPaymentCreateScreen />}
+        />
       </Route>
     )
   );

@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Input, Search } from "../../components/inputs";
 import { Modal } from "../../components/modals";
+import { fromISOToDateTime12hr } from "../../services/Conversion";
 
 const IndexScreen = () => {
   document.title = "Events";
@@ -178,6 +179,8 @@ const IndexScreen = () => {
                 options={[
                   { label: "No filter", value: "" },
                   { label: "Active", value: "active" },
+                  { label: "Completed", value: "completed" },
+                  { label: "Unpaid", value: "unpaid" },
                   { label: "Removed", value: "removed" },
                 ]}
                 onChange={handleSearchEventKeyChange}
@@ -200,8 +203,12 @@ const IndexScreen = () => {
             <RowTable
               headers={["Date Start", "Date End", "Type", "Name", "Status", ""]}
               rows={event.map((event: any) => [
-                event.datetimeStarted,
-                event.datetimeEnded,
+                fromISOToDateTime12hr(event.datetimeStarted),
+                event.datetimeEnded ? (
+                  fromISOToDateTime12hr(event.datetimeEnded)
+                ) : (
+                  <span className="text-red-500">Not Available</span>
+                ),
                 event.type,
                 event.name,
                 event.status === "removed" ? (
@@ -240,7 +247,7 @@ const IndexScreen = () => {
       </div>
       {openRemoveModal ? (
         <Modal
-          header="Remove User"
+          header="Remove Event"
           content={
             <span>
               Are you sure you want to remove this event record? This cannot be
