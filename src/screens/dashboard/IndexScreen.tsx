@@ -274,12 +274,12 @@ const IndexScreen = () => {
               <div>
                 <br />
                 <RowTable
-                  headers={["Month", "Revenue"]}
+                  headers={["Month", "Difference in Previous"]}
                   rows={monthNames.map((month: any, index: number) => {
                     return [
                       month,
-                      previousYearSummaryArray[index] -
-                        currentYearSummaryArray[index],
+                      currentYearSummaryArray[index] -
+                        previousYearSummaryArray[index],
                     ];
                   })}
                 />
