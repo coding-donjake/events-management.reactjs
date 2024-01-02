@@ -257,7 +257,7 @@ const UpdateScreen = () => {
                     id="gender"
                     topLeftLabel="Sex"
                     options={[
-                      { label: "Select gender", value: "" },
+                      { label: "Select sex", value: "" },
                       { label: "Male", value: "male" },
                       { label: "Female", value: "female" },
                     ]}
