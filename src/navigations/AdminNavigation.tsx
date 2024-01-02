@@ -17,7 +17,7 @@ const AdminNavigation = () => {
   const currentURL = window.location.href;
 
   return (
-    <div className="flex flex-col flex-shrink-0 gap-4 w-60 h-screen p-4 bg-white">
+    <div className="flex flex-col flex-shrink-0 gap-4 w-60 h-screen p-4 bg-white hide-in-print">
       <div>
         <img className="w-full" src={Logo} alt="Logo" />
       </div>

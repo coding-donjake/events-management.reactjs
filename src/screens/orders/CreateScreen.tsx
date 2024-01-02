@@ -49,6 +49,7 @@ const CreateScreen = () => {
   ) => {
     const { name, value } = e.target;
     if (name === "supplyId") {
+      console.log(value);
       setSupplyId(value);
       return;
     }
@@ -126,6 +127,7 @@ const CreateScreen = () => {
     if (supplyId === "") {
       return;
     }
+    console.log(supplyId);
     const newSupply = { supplyId: supplyId, quantity: quantity };
     const existingSupplies = formData.orderSupplies;
     const existingIndex = (existingSupplies as any).findIndex(
@@ -389,8 +391,8 @@ const CreateScreen = () => {
                       (
                         supply[
                           (formData.orderSupplies as any).findIndex(
-                            (temp: { supplyId: string }) =>
-                              temp.supplyId === temp.supplyId
+                            (temp2: { supplyId: string }) =>
+                              temp2.supplyId === temp.supplyId
                           )
                         ] as any
                       ).name
@@ -398,8 +400,8 @@ const CreateScreen = () => {
                       (
                         supply[
                           (formData.orderSupplies as any).findIndex(
-                            (temp: { supplyId: string }) =>
-                              temp.supplyId === temp.supplyId
+                            (temp2: { supplyId: string }) =>
+                              temp2.supplyId === temp.supplyId
                           )
                         ] as any
                       ).brand

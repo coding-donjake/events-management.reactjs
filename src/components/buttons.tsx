@@ -19,7 +19,12 @@ export const Button = ({
   disabled,
 }: ButtonProps) => {
   return (
-    <button className="btn" type={type} onClick={onClick} disabled={disabled}>
+    <button
+      className="btn hide-in-print"
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {icon ? (
         <div className="icon">
           {processing ? (

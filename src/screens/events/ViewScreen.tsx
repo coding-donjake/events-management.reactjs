@@ -7,6 +7,7 @@ import {
   faList,
   faPen,
   faPlus,
+  faPrint,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -82,17 +83,29 @@ const ViewScreen = () => {
     <div className="flex h-screen">
       <AdminNavigation />
       <div className="flex-1 h-screen p-4 overflow-auto">
-        <h1 className="flex-1 font-bold text-3xl">Events</h1>
+        <h1 className="flex-1 font-bold text-3xl hide-in-print">Events</h1>
         <hr />
         <br />
         <div className="p-6 bg-white rounded-xl shadow-xl">
           <div className="flex gap-4 mb-2">
-            <h1 className="flex-1 font-bold text-xl">Event Workspace</h1>
+            <h1 className="flex-1 font-bold text-xl hide-in-print">
+              Event Workspace
+            </h1>
+            <h1 className="flex-1 font-bold text-xl show-in-print">
+              Event Details
+            </h1>
             <div className="flex gap-2">
               <Button
                 icon={<FontAwesomeIcon icon={faChevronLeft} />}
                 content="Back"
                 onClick={() => navigate(-1)}
+              />
+              <Button
+                icon={<FontAwesomeIcon icon={faPrint} />}
+                content="Print"
+                onClick={() => {
+                  window.print();
+                }}
               />
               <Button
                 icon={<FontAwesomeIcon icon={faList} />}
@@ -154,6 +167,22 @@ const ViewScreen = () => {
                 onChange={() => {}}
                 readonly={true}
               />
+              <div className="flex gap-4">
+                <Input
+                  id="price"
+                  topLeftLabel="Price"
+                  value={event.price}
+                  onChange={() => {}}
+                  readonly={true}
+                />
+                <Input
+                  id="balance"
+                  topLeftLabel="Balance"
+                  value={event.balance}
+                  onChange={() => {}}
+                  readonly={true}
+                />
+              </div>
               <br />
               <div className="flex gap-4">
                 <div className="flex-1 p-4 bg-gray-100 rounded-xl">
@@ -199,12 +228,10 @@ const ViewScreen = () => {
                   </div>
                   {event.EventSupply.length > 0 ? (
                     <RowTable
-                      headers={["Name", "Quantity"]}
-                      rows={event.EventSupply.map((x: any) => [
-                        x.Supply.name,
-                        x.quantity > 0
-                          ? `${x.quantity} pcs`
-                          : `${x.quantity} pc`,
+                      headers={["Date Paid", "Amount"]}
+                      rows={event.Payment.map((x: any) => [
+                        fromISOToDateTime12hr(x.datetimePayment),
+                        x.amount,
                       ])}
                     />
                   ) : (
@@ -212,7 +239,7 @@ const ViewScreen = () => {
                       <span className="text-6xl">
                         <FontAwesomeIcon icon={faFolderOpen} />
                       </span>
-                      <p>No supplies for this event.</p>
+                      <p>No payments for this event.</p>
                     </div>
                   )}
                 </div>

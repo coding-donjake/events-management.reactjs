@@ -178,6 +178,18 @@ const UpdateScreen = () => {
     if (supplyId === "") {
       return;
     }
+    if (
+      (
+        supply[
+          (supply as any).findIndex(
+            (temp2: { id: string }) => temp2.id === supplyId
+          )
+        ] as any
+      ).stock < quantity
+    ) {
+      toast.error("Not enough stocks.");
+      return;
+    }
     const newSupply = { supplyId: supplyId, quantity: quantity };
     const existingSupplies = formData.eventSupplies;
     const existingIndex = (existingSupplies as any).findIndex(
@@ -196,6 +208,17 @@ const UpdateScreen = () => {
   };
 
   const updateQuantity = (id: string, offset: number) => {
+    if (
+      (
+        supply[
+          (supply as any).findIndex((temp2: { id: string }) => temp2.id === id)
+        ] as any
+      ).stock -
+        offset <
+      0
+    ) {
+      return;
+    }
     const existingSupplies = formData.eventSupplies;
     const existingIndex = (existingSupplies as any).findIndex(
       (supply: { supplyId: string }) => supply.supplyId === id
@@ -208,6 +231,11 @@ const UpdateScreen = () => {
       ...prevData,
       ["eventSupplies"]: existingSupplies,
     }));
+    (
+      supply[
+        (supply as any).findIndex((temp2: { id: string }) => temp2.id === id)
+      ] as any
+    ).stock -= offset;
   };
 
   const removeSupply = (id: string) => {
@@ -366,7 +394,7 @@ const UpdateScreen = () => {
         <br />
         <div className="p-6 bg-white rounded-xl shadow-xl">
           <div className="flex gap-4 mb-2">
-            <h1 className="flex-1 font-bold text-xl">Update Form</h1>
+            <h1 className="flex-1 font-bold text-xl">Create Form</h1>
             <div className="flex gap-2">
               <Button
                 icon={<FontAwesomeIcon icon={faChevronLeft} />}
@@ -383,7 +411,7 @@ const UpdateScreen = () => {
           ) : (
             <form className="mx-auto w-full max-w-lg" onSubmit={handleOnSubmit}>
               <div className="flex flex-col gap-4">
-                <h2 className="font-bold text-center">Event Information</h2>
+                <h2 className="font-bold text-center">Event supplies</h2>
                 <div className="flex gap-2">
                   <Input
                     id="name"
@@ -436,8 +464,8 @@ const UpdateScreen = () => {
                         (
                           supply[
                             (formData.eventSupplies as any).findIndex(
-                              (temp: { supplyId: string }) =>
-                                temp.supplyId === temp.supplyId
+                              (temp2: { supplyId: string }) =>
+                                temp2.supplyId === temp.supplyId
                             )
                           ] as any
                         ).name
@@ -445,8 +473,8 @@ const UpdateScreen = () => {
                         (
                           supply[
                             (formData.eventSupplies as any).findIndex(
-                              (temp: { supplyId: string }) =>
-                                temp.supplyId === temp.supplyId
+                              (temp2: { supplyId: string }) =>
+                                temp2.supplyId === temp.supplyId
                             )
                           ] as any
                         ).brand

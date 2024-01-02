@@ -198,14 +198,7 @@ const IndexScreen = () => {
             </div>
           ) : (
             <RowTable
-              headers={[
-                "Username",
-                "Full Name",
-                "Gender",
-                "Role",
-                "Status",
-                "",
-              ]}
+              headers={["Username", "Full Name", "Sex", "Role", "Status", ""]}
               rows={admin.map((admin: any) => [
                 admin.username,
                 `${admin.User.lastName}, ${admin.User.firstName} ${admin.User.middleName} ${admin.User.suffix}`,

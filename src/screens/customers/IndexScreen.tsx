@@ -198,7 +198,7 @@ const IndexScreen = () => {
             </div>
           ) : (
             <RowTable
-              headers={["Full Name", "Gender", "Email", "Phone", "Status", ""]}
+              headers={["Full Name", "Sex", "Email", "Phone", "Status", ""]}
               rows={customer.map((customer: any) => [
                 `${customer.User.lastName}, ${customer.User.firstName} ${customer.User.middleName} ${customer.User.suffix}`,
                 customer.User.gender,

@@ -3,7 +3,7 @@ import AdminNavigation from "../../navigations/AdminNavigation";
 import { faChevronLeft, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, PrimaryButton } from "../../components/buttons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Input } from "../../components/inputs";
 import { toast } from "react-toastify";
 import { fromISOToDateTimeInput } from "../../services/Conversion";
@@ -11,15 +11,15 @@ import { fromISOToDateTimeInput } from "../../services/Conversion";
 const CreateScreen = () => {
   document.title = "Create Payment";
 
+  const { id } = useParams();
   const navigate = useNavigate();
   const [createFormProcessing, setCreateFormProcessing] =
     useState<boolean>(false);
   const [formData, setFormData] = useState<{
     [key: string]: string;
   }>({
-    name: "",
-    brand: "",
-    type: "",
+    datetimePayment: "",
+    amount: "",
   });
 
   const handleInputChange = (
@@ -52,6 +52,11 @@ const CreateScreen = () => {
       }
     }
 
+    setFormData((prevData) => ({
+      ...prevData,
+      ["eventId"]: id!,
+    }));
+
     try {
       setCreateFormProcessing(true);
       const response = await fetch("http://localhost:5000/payment/create", {
@@ -61,10 +66,13 @@ const CreateScreen = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          event: {
+            id: id,
+          },
           payment: {
-            name: formData.name,
-            brand: formData.brand,
-            type: formData.type,
+            datetimePayment: new Date(formData.datetimePayment).toISOString(),
+            amount: parseFloat(formData.amount),
+            eventId: formData.eventId,
           },
           password: formData.password,
         }),
@@ -76,6 +84,11 @@ const CreateScreen = () => {
       }
       if (response.status === 500) {
         toast.error("Internal server error!");
+        setCreateFormProcessing(false);
+        return;
+      }
+      if (response.status === 501) {
+        toast.error("Payment exceeds the balance.");
         setCreateFormProcessing(false);
         return;
       }
@@ -120,7 +133,6 @@ const CreateScreen = () => {
                   type="datetime-local"
                   id="datetimePayment"
                   topLeftLabel="Date paid"
-                  value={fromISOToDateTimeInput(new Date().toISOString())}
                   onChange={handleInputChange}
                 />
                 <Input

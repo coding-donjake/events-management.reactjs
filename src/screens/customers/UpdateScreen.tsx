@@ -233,7 +233,7 @@ const UpdateScreen = () => {
                 <div className="flex gap-2">
                   <Select
                     id="gender"
-                    topLeftLabel="Gender"
+                    topLeftLabel="Sex"
                     options={[
                       { label: "Select gender", value: "" },
                       { label: "Male", value: "male" },

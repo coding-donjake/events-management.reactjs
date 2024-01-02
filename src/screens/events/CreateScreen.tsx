@@ -6,6 +6,8 @@ import { Button, PrimaryButton } from "../../components/buttons";
 import { useNavigate } from "react-router-dom";
 import { Input, Select } from "../../components/inputs";
 import { toast } from "react-toastify";
+import { eventType } from "../../constants/EventType";
+import { eventName } from "../../constants/EventName";
 
 const CreateScreen = () => {
   document.title = "Create Event";
@@ -17,6 +19,7 @@ const CreateScreen = () => {
     [key: string]: string;
   }>({
     datetimeStarted: "",
+    datetimeEnded: "",
     type: "",
     name: "",
     address: "",
@@ -46,6 +49,10 @@ const CreateScreen = () => {
 
     for (const key in formData) {
       if (!formData[key]) {
+        if (key === "customerId") {
+          toast.error(`Please select a customer`);
+          return;
+        }
         if (key != "middleName" && key != "suffix") {
           toast.error(
             `Please enter ${key.replace(/^\w/, (c) => c.toUpperCase())}`
@@ -66,6 +73,7 @@ const CreateScreen = () => {
         body: JSON.stringify({
           event: {
             datetimeStarted: new Date(formData.datetimeStarted).toISOString(),
+            datetimeEnded: new Date(formData.datetimeEnded).toISOString(),
             type: formData.type,
             name: formData.name,
             address: formData.address,
@@ -192,7 +200,7 @@ const CreateScreen = () => {
               <div className="flex flex-col gap-4">
                 <h2 className="font-bold text-center">Event Information</h2>
                 <Select
-                  topLeftLabel="Supplier"
+                  topLeftLabel="Customer"
                   id="customerId"
                   options={[
                     { label: "Select customer", value: "" },
@@ -204,6 +212,13 @@ const CreateScreen = () => {
                   onChange={handleInputChange}
                 />
                 <Input
+                  type="number"
+                  id="price"
+                  topLeftLabel="Event price"
+                  min={0}
+                  onChange={handleInputChange}
+                />
+                <Input
                   id="address"
                   topLeftLabel="Address"
                   onChange={handleInputChange}
@@ -212,26 +227,39 @@ const CreateScreen = () => {
                   <Input
                     type="datetime-local"
                     id="datetimeStarted"
-                    topLeftLabel="Date Start"
+                    topLeftLabel="Event Start"
                     onChange={handleInputChange}
                   />
                   <Input
-                    type="number"
-                    id="price"
-                    topLeftLabel="Event price"
-                    min={0}
+                    type="datetime-local"
+                    id="datetimeEnded"
+                    topLeftLabel="Event End"
                     onChange={handleInputChange}
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Input
-                    id="type"
+                  <Select
                     topLeftLabel="Event type"
+                    id="type"
+                    options={[
+                      { label: "Select type", value: "" },
+                      ...eventType.map((type: any) => ({
+                        label: type,
+                        value: type,
+                      })),
+                    ]}
                     onChange={handleInputChange}
                   />
-                  <Input
-                    id="name"
+                  <Select
                     topLeftLabel="Event name"
+                    id="name"
+                    options={[
+                      { label: "Select name", value: "" },
+                      ...eventName.map((name: any) => ({
+                        label: name,
+                        value: name,
+                      })),
+                    ]}
                     onChange={handleInputChange}
                   />
                 </div>
