@@ -390,18 +390,18 @@ const CreateScreen = () => {
                     `${
                       (
                         supply[
-                          (formData.orderSupplies as any).findIndex(
-                            (temp2: { supplyId: string }) =>
-                              temp2.supplyId === temp.supplyId
+                          (supply as any).findIndex(
+                            (temp2: { id: string }) =>
+                              temp2.id === temp.supplyId
                           )
                         ] as any
                       ).name
                     } (${
                       (
                         supply[
-                          (formData.orderSupplies as any).findIndex(
-                            (temp2: { supplyId: string }) =>
-                              temp2.supplyId === temp.supplyId
+                          (supply as any).findIndex(
+                            (temp2: { id: string }) =>
+                              temp2.id === temp.supplyId
                           )
                         ] as any
                       ).brand

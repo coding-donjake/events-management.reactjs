@@ -52,11 +52,6 @@ const CreateScreen = () => {
       }
     }
 
-    setFormData((prevData) => ({
-      ...prevData,
-      ["eventId"]: id!,
-    }));
-
     try {
       setCreateFormProcessing(true);
       const response = await fetch("http://localhost:5000/payment/create", {
@@ -72,7 +67,7 @@ const CreateScreen = () => {
           payment: {
             datetimePayment: new Date(formData.datetimePayment).toISOString(),
             amount: parseFloat(formData.amount),
-            eventId: formData.eventId,
+            eventId: id,
           },
           password: formData.password,
         }),
